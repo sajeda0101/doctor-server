@@ -40,6 +40,21 @@ async function run() {
          const service =await serviceCollection.findOne(query);
          res.send(service)
        });
+       const userCollection = client.db("lifecare").collection("users");
+
+      //  app.get('/users',async(req,res)=>{
+      //   const query={};
+      //   const cursor=userCollection.find(query)
+      //   const users=await cursor.toArray()
+      //   res.send(user)
+      //  })
+
+      app.post('/users',async(req,res)=>{
+        const user=req.body;
+        const result=await userCollection.insertOne(user)
+        res.send(result)
+      })
+
       
   } finally {
   }
