@@ -27,6 +27,7 @@ async function run() {
   try {
     const serviceCollection = client.db("lifecare").collection("services");
 
+    // services read
     app.get("/services", async (req, res) => {
       const query = {};
       const cursor = serviceCollection.find(query);
@@ -34,6 +35,16 @@ async function run() {
       res.send(services);
       
     });
+    // limit data for homepage
+    app.get("/service", async (req, res) => {
+      const query = {};
+      const cursor = serviceCollection.find(query);
+      const services = await cursor.limit(3).toArray();
+      res.send(services);
+      
+    });
+
+    // services read by id
     app.get("/services/:id", async (req, res) => {
         const id=req.params.id;
         const query={_id:ObjectId(id)}
@@ -42,13 +53,29 @@ async function run() {
        });
        const userCollection = client.db("lifecare").collection("users");
 
-      //  app.get('/users',async(req,res)=>{
-      //   const query={};
-      //   const cursor=userCollection.find(query)
-      //   const users=await cursor.toArray()
-      //   res.send(user)
-      //  })
+      //  user read
+     app.get('/users',async(req,res)=>{
+    const query={};
+   
+      const cursor=userCollection.find(query);
+      const users=await cursor.toArray();
+      res.send(users)
+     })
+   
+     app.get('/users',async(req,res)=>{
+      let query={};
+      if(req.query.email){
+        query={
+          email:req.query.email
+        }
+      }
+      const cursor=userCollection.find(query);
+      const  review=await cursor.toArray();
+      res.send(review)
+     })
 
+
+    //  create user
       app.post('/users',async(req,res)=>{
         const user=req.body;
         const result=await userCollection.insertOne(user)
