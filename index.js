@@ -10,7 +10,7 @@ app.use(cors());
 app.use(express.json());
 
 app.get("/", (req, res) => {
-  res.send("life moment");
+  res.send("life care");
 });
 //
 //
@@ -56,22 +56,31 @@ async function run() {
       //  user read
      app.get('/users',async(req,res)=>{
     const query={};
-   
       const cursor=userCollection.find(query);
       const users=await cursor.toArray();
       res.send(users)
      })
+    //  data create for add service
+    app.post('/services',async(req,res)=>{
+      const user=req.body;
+      const addService=await serviceCollection.insertOne(user);
+      res.send(addService)
+    })
    
+    //  data get for my reviews
+
+
      app.get('/users',async(req,res)=>{
-      let query={};
-      if(req.query.email){
-        query={
-          email:req.query.email
+       let query={};
+       if(req.query.email){
+         query={
+           email:req.query.email
+          }
         }
-      }
-      const cursor=userCollection.find(query);
-      const  review=await cursor.toArray();
-      res.send(review)
+        console.log(req.query.email)
+      const cursor=userCollection.find(query)
+      const reviews=await cursor.toArray();
+      res.send(reviews)
      })
 
 
