@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 require("dotenv").config();
+const jwt=require('jsonwebtoken');
 const cors = require("cors");
 const { MongoClient, ServerApiVersion,ObjectId } = require("mongodb");
 const port = process.env.PORT || 5000;
@@ -55,13 +56,7 @@ async function run() {
          res.send(service)
        });
 
-      //  user read
-      // app.get('/users',async(req,res)=>{
-      //   const query={};
-      //     const cursor=userCollection.find(query);
-      //     const users=await cursor.toArray();
-      //     res.send(users)
-      //    })
+    
    
     //  data create for add service
     app.post('/services',async(req,res)=>{
@@ -98,21 +93,13 @@ async function run() {
 
     })
    
-
-    // data get for checkout page
-
-  //   app.get('/users',async(req,res)=>{
-  //  let query={};
-  //  if(req.query.service_id){
-  //   query={
-  //     service_id:req.query.service_id
-  //   }
-  //  }
-      
-  //      const services =await userCollection.find(query);
-  //      res.send(services)
-  //   })
-
+    // jwt token access
+    app.post('/jwt',(req,res)=>{
+      const user=req.body;
+      const token=jwt.sign(user,process.env.ACCESS_TOKEN_SECRET,{expiresIn:'7d'})
+      res.send({token})
+    
+    })
 
     //  create user
       app.post('/users',async(req,res)=>{
