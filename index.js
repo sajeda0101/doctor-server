@@ -44,7 +44,7 @@ async function run() {
       const query = {};
       const cursor = serviceCollection.find(query);
       const services = await cursor.limit(3).toArray();
-      res.send(services.reverse());
+      res.send(services);
       
     });
 
@@ -82,7 +82,29 @@ async function run() {
       const reviews=await cursor.toArray();
       res.send(reviews);
     })
+    // get data for updating
+    app.get('/users/:id',async(req,res)=>{
+      const id=req.params.id;
+      const query={_id:ObjectId(id)}
+      const user=await userCollection.findOne(query);
+      res.send(user)
+    })
 
+    // update data
+    app.put('/users/:id',async(req,res)=>{
+      const id=req.params.id;
+      const query={_id:ObjectId(id)}
+      const updateReview=req.body;
+      const option={upsert:true}
+      const updateDoc={
+        $set:{
+          message:updateReview.message
+        }
+      }
+      const updateData=await userCollection.updateOne(query,updateDoc,option);
+      console.log(updateReview)
+      res.send(updateData)
+    })
  
     // delete data
     app.delete('/users/:id',async(req,res)=>{
