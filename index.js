@@ -24,6 +24,21 @@ const client = new MongoClient(uri, {
   useUnifiedTopology: true,
   serverApi: ServerApiVersion.v1,
 });
+function veriFyJWT(req,res,next){
+  const authHeader=req.headers.authorization;
+  if(!authHeader){
+    res.status(401).send({message:'anauthorized access'})
+  }
+  const token=authHeader.split(' ')[1];
+  jwt.verify(token,process.env.ACCESS_TOKEN_SECRET,function(err,decoded){
+
+    if(err){
+      res.status(401).send({message:'anauthorized access'})
+    }
+      req.decoded=decoded;
+      next()
+  })
+}
 
 async function run() {
   try {
@@ -66,7 +81,11 @@ async function run() {
     })
 
     // data get for my reviews
-    app.get('/users',async(req,res)=>{
+    app.get('/users',veriFyJWT,async(req,res)=>{
+      const decoded=req.decoded;
+      if(decoded.email !== req.query.emaill){
+        res.status(401).send({message:'unauthorized'})
+      }
      let query={};
      if(req.query.email){
       query={
